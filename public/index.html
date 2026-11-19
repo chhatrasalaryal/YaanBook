@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YaanBook – Charter jets & helicopters</title>
+  <meta name="description" content="Compare charter jets and helicopters from verified Indian NSOP operators. We find the aircraft nearest to you, so you don't pay for empty flights.">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="logo" href="/">Yaan<span>Book</span></a>
+      <nav class="links">
+        <a href="/" class="active">Search</a>
+        <a href="#deals">Empty-leg deals</a>
+        <a href="/booking.html">My booking</a>
+        <a href="/operator.html">For operators</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <h1>Charter jets and helicopters, priced in the open</h1>
+      <p>We check where every listed aircraft is right now and price the full trip, empty positioning flights included. The aircraft nearest to you usually wins, so you don't pay to fly someone's jet in from across the country.</p>
+
+      <form id="search" class="card search-card" autocomplete="off">
+        <div class="tabs" role="tablist">
+          <button type="button" class="tab active" data-trip="oneway">One way</button>
+          <button type="button" class="tab" data-trip="round">Round trip</button>
+          <button type="button" class="tab" data-trip="multi">Multi-city</button>
+        </div>
+        <div id="legs"></div>
+        <button type="button" id="add-leg" class="btn ghost small hidden">+ Add another flight</button>
+        <div class="search-extra" style="margin-top:8px">
+          <label class="f">Passengers
+            <input type="number" id="pax" min="1" max="20" value="2" required>
+          </label>
+          <div class="f">
+            <span style="font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em">Aircraft type</span>
+            <div class="chips" id="cats"></div>
+          </div>
+          <button class="btn" type="submit" id="search-btn">Search aircraft</button>
+        </div>
+        <div id="search-error" class="alert error hidden"></div>
+      </form>
+      <datalist id="loc-list"></datalist>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <div id="results-area" class="layout hidden">
+      <section>
+        <div id="deal-matches"></div>
+        <div class="toolbar">
+          <div class="summary" id="summary"></div>
+          <label class="f" style="flex-direction:row;align-items:center;gap:8px">Sort
+            <select id="sort" style="width:auto">
+              <option value="price">Lowest total price</option>
+              <option value="nearest">Nearest aircraft</option>
+              <option value="fastest">Shortest flight time</option>
+              <option value="seats">Smallest that fits</option>
+            </select>
+          </label>
+        </div>
+        <div id="results"></div>
+      </section>
+      <aside class="map-panel card">
+        <div id="map"></div>
+      </aside>
+    </div>
+
+    <section class="deals" id="deals">
+      <h2>Empty-leg deals</h2>
+      <p class="meta">Aircraft that have to fly empty anyway, at a fraction of the normal price. Book the whole aircraft.</p>
+      <div class="deal-grid" id="deal-grid"><div class="empty-state">Loading…</div></div>
+    </section>
+
+    <section class="how">
+      <div class="card"><h3>📍 Nearest aircraft first</h3><p>Operators update where each aircraft is. We price positioning from that spot, not from a far-off home base.</p></div>
+      <div class="card"><h3>🧾 Every rupee itemised</h3><p>Flying, positioning, return ferry, minimum billing, landing fees, night halts, platform fee and GST, all on one line each.</p></div>
+      <div class="card"><h3>✈️ Smarter multi-day trips</h3><p>For multi-day trips we work out whether waiting overnight or flying home and back is cheaper, and quote the cheaper one.</p></div>
+      <div class="card"><h3>✅ Verified operators</h3><p>Only DGCA NSOP permit holders checked by our team appear in search.</p></div>
+    </section>
+  </main>
+
+  <dialog id="book-dlg">
+    <form method="dialog" class="dlg-body" id="book-form">
+      <div class="dlg-head"><h2 id="book-title">Request booking</h2><button class="icon-btn" value="cancel" formnovalidate aria-label="Close">✕</button></div>
+      <p class="meta" id="book-sub"></p>
+      <div id="book-addons-wrap">
+        <h3 style="font-size:.95rem;margin-top:12px">Add-ons</h3>
+        <div class="addon-list" id="book-addons"></div>
+      </div>
+      <h3 style="font-size:.95rem;margin-top:12px">Lead passenger</h3>
+      <div class="form-grid">
+        <label class="f full">Full name<input name="name" required minlength="2"></label>
+        <label class="f">Email<input name="email" type="email" required></label>
+        <label class="f">Phone<input name="phone" type="tel" required placeholder="+91 98xxxxxxx"></label>
+      </div>
+      <div class="alert info">Nothing is charged yet. The operator confirms availability, usually within 2 hours, and then we send a payment link. The price shown is the final price.</div>
+      <div id="book-error" class="alert error hidden"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px">
+        <div><div class="meta">Total incl. GST</div><div id="book-total" style="font-weight:800;font-size:1.3rem"></div></div>
+        <button class="btn" id="book-submit" value="default">Send booking request</button>
+      </div>
+    </form>
+    <div class="dlg-body hidden" id="book-done"></div>
+  </dialog>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="common.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

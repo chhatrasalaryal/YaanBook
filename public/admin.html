@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin – YaanBook</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="logo" href="/">Yaan<span>Book</span> <small style="font-weight:500;color:var(--muted);font-size:.8rem">admin</small></a>
+      <nav class="links"><a href="/">Customer site</a><a href="/operator.html">Operator portal</a></nav>
+    </div>
+  </header>
+  <main class="wrap page">
+    <div id="msg" class="alert hidden"></div>
+    <form id="login" class="card panel inline-form" style="max-width:520px">
+      <label class="f">Admin key<input name="key" type="password" required></label>
+      <button class="btn">Open</button>
+    </form>
+    <section id="dash" class="hidden">
+      <h1>Marketplace overview</h1>
+      <div class="stat-grid" id="stats"></div>
+      <div class="card panel">
+        <h2>Operators</h2>
+        <p class="meta">Check each operator's DGCA NSOP permit before verifying. Only verified operators appear in search.</p>
+        <div class="table-scroll"><table id="ops"></table></div>
+      </div>
+    </section>
+  </main>
+  <script src="common.js"></script>
+  <script>
+    let key = null;
+    const adminApi = (p, o = {}) => api('/admin' + p, { ...o, headers: { 'x-admin-key': key } });
+    function flash(t, k) { const m = $('#msg'); m.className = `alert ${k}`; m.textContent = t; }
+    async function load() {
+      try {
+        const { stats, operators } = await adminApi('/overview');
+        $('#login').classList.add('hidden');
+        $('#dash').classList.remove('hidden');
+        $('#stats').innerHTML = [
+          [stats.verifiedOperators, 'Verified operators'],
+          [stats.activeAircraft, 'Active aircraft'],
+          [stats.bookings, 'Booking requests'],
+          [inr(stats.confirmedValue), 'Confirmed value'],
+          [stats.openEmptyLegs, 'Open empty legs'],
+        ].map(([v, l]) => `<div class="card stat"><b>${v}</b><span>${l}</span></div>`).join('');
+        $('#ops').innerHTML = `<thead><tr><th>Operator</th><th>NSOP permit</th><th>Base</th><th>Fleet</th><th>Contact</th><th>Status</th><th></th></tr></thead><tbody>
+          ${operators.map((o) => `<tr>
+            <td><b>${esc(o.name)}</b><div class="meta">since ${esc(o.createdAt)}</div></td>
+            <td>${esc(o.nsopPermit)}</td><td>${esc(o.base)}</td><td>${o.fleetSize}</td>
+            <td>${esc(o.email)}<div class="meta">${esc(o.phone)}</div></td>
+            <td><span class="status ${o.status}">${o.status}</span></td>
+            <td><div class="row-actions">
+              ${o.status !== 'verified' ? `<button class="btn small good" data-id="${o.id}" data-s="verified">Verify</button>` : ''}
+              ${o.status !== 'suspended' ? `<button class="btn small danger" data-id="${o.id}" data-s="suspended">Suspend</button>` : ''}
+            </div></td></tr>`).join('')}</tbody>`;
+      } catch (e) { flash(e.message, 'error'); }
+    }
+    $('#login').addEventListener('submit', (e) => { e.preventDefault(); key = e.target.key.value; load(); });
+    $('#ops').addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-s]');
+      if (!b) return;
+      try { await adminApi(`/operators/${b.dataset.id}/status`, { method: 'POST', body: { status: b.dataset.s } }); flash('Updated.', 'ok'); load(); }
+      catch (err) { flash(err.message, 'error'); }
+    });
+  </script>
+</body>
+</html>

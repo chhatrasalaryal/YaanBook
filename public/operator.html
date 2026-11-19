@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Operator portal – YaanBook</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a class="logo" href="/">Yaan<span>Book</span> <small style="font-weight:500;color:var(--muted);font-size:.8rem">for operators</small></a>
+      <nav class="links">
+        <a href="/">Customer site</a>
+        <a href="/operator.html" class="active">Operator portal</a>
+        <a href="#" id="logout" class="hidden">Log out</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <div id="msg" class="alert hidden"></div>
+
+    <section id="auth">
+      <h1>List your fleet on YaanBook</h1>
+      <p class="meta" style="max-width:720px">Reach customers across India without growing a sales team. Keep each aircraft's live location up to date and we send you the trips it is best placed to fly. Your empty return flights get resold as empty-leg deals.</p>
+      <div class="layout" style="grid-template-columns:1fr 1fr;padding-top:8px">
+        <form id="login" class="card panel">
+          <h2>Operator login</h2>
+          <label class="f">API key<input name="key" required placeholder="e.g. demo-deccan-key"></label>
+          <p class="meta demo-only">Demo keys: demo-aerowing-key, demo-northstar-key, demo-deccan-key, demo-himalayan-key, demo-coromandel-key, demo-eastern-key, demo-westjet-key</p>
+          <button class="btn">Log in</button>
+        </form>
+        <form id="register" class="card panel">
+          <h2>Register your company</h2>
+          <div class="form-grid">
+            <label class="f full">Company name<input name="name" required></label>
+            <label class="f">DGCA NSOP permit no.<input name="nsopPermit" required></label>
+            <label class="f">Home base<select name="base" id="reg-base" required></select></label>
+            <label class="f">Email<input name="email" type="email" required></label>
+            <label class="f">Phone<input name="phone" type="tel"></label>
+          </div>
+          <p class="meta">Our team checks your permit before your aircraft appear in search.</p>
+          <button class="btn">Register</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="dash" class="hidden">
+      <div class="toolbar">
+        <div><h1 id="op-name"></h1><div class="meta" id="op-meta"></div></div>
+      </div>
+      <div class="stat-grid" id="op-stats"></div>
+
+      <div class="card panel">
+        <h2>Booking requests</h2>
+        <div id="bookings"></div>
+      </div>
+
+      <div class="card panel">
+        <h2>Fleet & live positions</h2>
+        <p class="meta">Update where each aircraft is after every flight. Search prices trips from this location, so keeping it current wins you nearby trips.</p>
+        <div class="table-scroll"><table id="fleet"></table></div>
+      </div>
+
+      <div class="card panel">
+        <h2>Pricing policy</h2>
+        <p class="meta">Shown to customers line by line. Being competitive here moves you up the results.</p>
+        <form id="policy" class="inline-form">
+          <label class="f">Empty-flight rate (% of hourly)<input name="ferryRateFactor" type="number" min="0" max="100" step="1"></label>
+          <label class="f">Min billing h/day<input name="minHoursPerDay" type="number" min="0" max="5" step="0.25"></label>
+          <label class="f">Night halt (₹/night)<input name="nightHaltCharge" type="number" min="0" step="1000"></label>
+          <label class="f">Bill return ferry<select name="chargesReturnFerry"><option value="1">Yes</option><option value="0">No</option></select></label>
+          <button class="btn">Save policy</button>
+        </form>
+      </div>
+
+      <div class="layout" style="grid-template-columns:1fr 1fr;padding:0">
+        <div class="card panel">
+          <h2>List an empty leg</h2>
+          <form id="emptyleg" class="form-grid">
+            <label class="f full">Aircraft<select name="aircraftId" class="ac-select" required></select></label>
+            <label class="f">From<select name="from" class="loc-select" required></select></label>
+            <label class="f">To<select name="to" class="loc-select" required></select></label>
+            <label class="f">Date<input name="date" type="date" required></label>
+            <label class="f">Price (₹, excl. GST)<input name="price" type="number" min="1000" step="1000" required></label>
+            <button class="btn full">Publish deal</button>
+          </form>
+          <div id="emptylegs" style="margin-top:12px"></div>
+        </div>
+        <div class="card panel">
+          <h2>Block dates</h2>
+          <form id="block" class="form-grid">
+            <label class="f full">Aircraft<select name="aircraftId" class="ac-select" required></select></label>
+            <label class="f">From<input name="dateFrom" type="date" required></label>
+            <label class="f">To<input name="dateTo" type="date" required></label>
+            <label class="f full">Reason<input name="reason" placeholder="Maintenance, owner use…"></label>
+            <button class="btn full">Block dates</button>
+          </form>
+          <div id="blocks" style="margin-top:12px"></div>
+        </div>
+      </div>
+
+      <div class="card panel">
+        <h2>Add an aircraft</h2>
+        <form id="add-ac" class="inline-form">
+          <label class="f">Model<input name="model" required placeholder="Embraer Phenom 300"></label>
+          <label class="f">Type<select name="category" id="add-cat" required></select></label>
+          <label class="f">Registration<input name="registration" required placeholder="VT-ABC"></label>
+          <label class="f">Seats<input name="seats" type="number" min="1" max="30" required></label>
+          <label class="f">Cruise km/h<input name="cruise_kmh" type="number" min="100" max="1100" required></label>
+          <label class="f">Range km<input name="range_km" type="number" min="200" max="15000" required></label>
+          <label class="f">₹ per hour<input name="hourly_rate" type="number" min="10000" step="1000" required></label>
+          <label class="f">Year<input name="year" type="number" min="1970" required></label>
+          <label class="f">Home base<select name="base_code" class="loc-select" required></select></label>
+          <label class="f">Currently at<select name="current_code" class="loc-select" required></select></label>
+          <button class="btn">Add aircraft</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="common.js"></script>
+  <script src="operator.js"></script>
+</body>
+</html>

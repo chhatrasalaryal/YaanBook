@@ -1,0 +1,18 @@
+{
+  "name": "yaanbook",
+  "version": "0.1.0",
+  "description": "Marketplace for booking non-scheduled charter aircraft and helicopters with transparent, positioning-aware pricing",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch server.js",
+    "test": "node --disable-warning=ExperimentalWarning --test \"test/**/*.test.js\""
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

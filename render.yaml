@@ -1,0 +1,19 @@
+# Render Blueprint: Dashboard → New → Blueprint → pick this repository.
+services:
+  - type: web
+    name: yaanbook
+    runtime: docker
+    region: singapore
+    plan: starter
+    branch: main
+    autoDeploy: true
+    healthCheckPath: /healthz
+    envVars:
+      - key: ADMIN_KEY
+        generateValue: true
+      - key: DEMO_MODE
+        value: "true"
+    disk:
+      name: yaanbook-data
+      mountPath: /var/data
+      sizeGB: 1
